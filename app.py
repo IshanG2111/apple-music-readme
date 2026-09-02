@@ -7,6 +7,9 @@ from dotenv import load_dotenv
 from flask import Flask, Response, render_template
 
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
 class RenderCard:
     def __init__(self) -> None:
         load_dotenv()
@@ -18,9 +21,11 @@ class RenderCard:
         """
         Returns Base64 encoded Apple Music icon.
         """
-        print(os.getcwd())
-        with open("static/icon.png", "rb") as f:
-            return b64encode(f.read()).decode("ascii")
+        icon_path = os.path.join(BASE_DIR, "static", "icon.png")
+        if os.path.exists(icon_path):
+            with open(icon_path, "rb") as f:
+                return b64encode(f.read()).decode("ascii")
+        return ""
 
     def __album_art_b64(self, img_url: str):
         """Converts album art to base64
@@ -108,7 +113,7 @@ class RenderCard:
         return svg
 
 
-app = Flask(__name__, template_folder="templates")
+app = Flask(__name__, template_folder=os.path.join(BASE_DIR, "templates"))
 rc = RenderCard()
 
 
