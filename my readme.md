@@ -26,17 +26,26 @@ I'm a Computer Science undergrad at KIIT University with a passion for building 
 
 ---
 
-## 📊 GitHub Stats
+## ⚡ Live Activity & 🎵 Coding Soundtrack
 
-<div align="center">
-
-<img src="https://github-readme-streak-stats.herokuapp.com/?user=IshanG2111&theme=tokyonight&hide_border=true&background=0d1117&ring=a78bfa&fire=a78bfa&currStreakLabel=a78bfa" alt="GitHub Streak" height="170"/>
-
-<br/><br/>
-
-<img src="https://github-readme-activity-graph.vercel.app/graph?username=IshanG2111&bg_color=0d1117&color=a78bfa&line=a78bfa&point=ffffff&area=true&hide_border=true" width="100%" alt="Contribution Graph"/>
-
-</div>
+<table border="0" width="100%">
+  <tr align="center">
+    <td width="55%" align="center" valign="middle">
+      <a href="https://github.com/IshanG2111">
+        <img src="https://streak-stats.demolab.com/?user=IshanG2111&theme=tokyonight&hide_border=true&background=0d1117&ring=a78bfa&fire=a78bfa&currStreakLabel=a78bfa" alt="GitHub Streak" height="195"/>
+      </a>
+      <br/><br/>
+      <a href="https://leetcode.com/Ishan_Ghosh21/" target="_blank">
+        <img src="https://leetcard.jacoblin.cool/Ishan_Ghosh21?theme=dark&font=JetBrains%20Mono&ext=heatmap" height="195" alt="LeetCode Stats"/>
+      </a>
+    </td>
+    <td width="45%" align="center" valign="middle">
+      <a href="https://music.apple.com" target="_blank">
+        <img src="https://apple-music-readme-snowy.vercel.app/?" alt="Currently Playing on Apple Music" height="425"/>
+      </a>
+    </td>
+  </tr>
+</table>
 
 ---
 
@@ -150,28 +159,6 @@ I'm a Computer Science undergrad at KIIT University with a passion for building 
 | 📮 Postman Student Expert | Certified in REST API design & testing |
 | 🔓 Open Source (GSSoC 2025) | 15+ merged components · Dark mode shipped globally |
 | 🏭 Industry Experience | SWE Intern @ **Tata Cummins** — 95% user adoption at launch |
-
----
-
-## 📈 Coding Activity
-
-<div align="center">
-
-[![LeetCode Stats](https://leetcard.jacoblin.cool/Ishan_Ghosh21?theme=dark&font=JetBrains%20Mono&ext=heatmap)](https://leetcode.com/Ishan_Ghosh21/)
-
-</div>
-
----
-
-## 🎵 On Repeat
-
-<div align="center">
-
-<a href="https://music.apple.com" target="_blank">
-  <img src="https://apple-music-readme-snowy.vercel.app/?" alt="Apple Music - Recently Played" />
-</a>
-
-</div>
 
 ---
 
