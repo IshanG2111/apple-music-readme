@@ -26,26 +26,31 @@ I'm a Computer Science undergrad at KIIT University with a passion for building 
 
 ---
 
-## ⚡ Live Activity & 🎵 Coding Soundtrack
+## 🎵 On Repeat · Coding Soundtrack
 
-<table border="0" width="100%">
-  <tr align="center">
-    <td width="55%" align="center" valign="middle">
-      <a href="https://github.com/IshanG2111">
-        <img src="https://streak-stats.demolab.com/?user=IshanG2111&theme=tokyonight&hide_border=true&background=0d1117&ring=a78bfa&fire=a78bfa&currStreakLabel=a78bfa" alt="GitHub Streak" height="195"/>
-      </a>
-      <br/><br/>
-      <a href="https://leetcode.com/Ishan_Ghosh21/" target="_blank">
-        <img src="https://leetcard.jacoblin.cool/Ishan_Ghosh21?theme=dark&font=JetBrains%20Mono&ext=heatmap" height="195" alt="LeetCode Stats"/>
-      </a>
-    </td>
-    <td width="45%" align="center" valign="middle">
-      <a href="https://music.apple.com" target="_blank">
-        <img src="https://apple-music-readme-snowy.vercel.app/?" alt="Currently Playing on Apple Music" height="425"/>
-      </a>
-    </td>
-  </tr>
-</table>
+<div align="center">
+
+<a href="https://music.apple.com" target="_blank">
+  <img src="https://apple-music-readme-snowy.vercel.app/?" alt="Currently Playing on Apple Music" height="380"/>
+</a>
+
+</div>
+
+---
+
+## 📊 Activity & Problem Solving
+
+<div align="center">
+
+<a href="https://github.com/IshanG2111">
+  <img src="https://streak-stats.demolab.com/?user=IshanG2111&theme=tokyonight&hide_border=true&background=0d1117&ring=a78bfa&fire=a78bfa&currStreakLabel=a78bfa" alt="GitHub Streak" height="185"/>
+</a>
+&nbsp;&nbsp;&nbsp;
+<a href="https://leetcode.com/Ishan_Ghosh21/" target="_blank">
+  <img src="https://leetcard.jacoblin.cool/Ishan_Ghosh21?theme=dark&font=JetBrains%20Mono&ext=heatmap" height="185" alt="LeetCode Stats"/>
+</a>
+
+</div>
 
 ---
 
