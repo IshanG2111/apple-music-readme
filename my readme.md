@@ -168,8 +168,7 @@ I'm a Computer Science undergrad at KIIT University with a passion for building 
 <div align="center">
 
 <a href="https://music.apple.com" target="_blank">
-  <!-- Replace the URL below with your deployed Vercel URL (e.g. https://your-app.vercel.app/?) -->
-  <img src="https://apple-music-readme.vercel.app/?" alt="Apple Music - Recently Played" />
+  <img src="https://apple-music-readme-snowy.vercel.app/?" alt="Apple Music - Recently Played" />
 </a>
 
 </div>
