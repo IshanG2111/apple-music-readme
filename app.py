@@ -67,9 +67,51 @@ class RenderCard:
             print(f"Error fetching album art: {e}")
         return ""
 
-    def __fetch_recent_albums(self):
+    def __fetch_recently_played_tracks(self, token, cookie, media_user_token):
         """
-        Fetches recently played albums from Apple Music.
+        Fetches the actual recently played tracks from Apple Music playback history.
+        """
+        url = "https://amp-api.music.apple.com/v1/me/recent/played/tracks?limit=10"
+        headers = {
+            "Authorization": f"Bearer {token}",
+            "Cookie": cookie,
+            "media-user-token": media_user_token,
+            "origin": "https://music.apple.com",
+            "referer": "https://music.apple.com/",
+        }
+
+        try:
+            response = requests.get(url, headers=headers, timeout=8)
+            if response.status_code == 200:
+                data = response.json()
+                tracks = data.get("data", [])
+                if tracks:
+                    # Most recently played track is the first item!
+                    track = tracks[0]
+                    attrs = track.get("attributes", {})
+                    name = attrs.get("name", "Unknown Track")
+                    artist_name = attrs.get("artistName", "Unknown Artist")
+                    artwork = attrs.get("artwork", {})
+                    image_url = artwork.get("url", "")
+                    if image_url:
+                        image_url = (
+                            image_url.replace("{w}", "632")
+                            .replace("{h}", "632")
+                            .replace("{f}", "jpg")
+                        )
+                    return {
+                        "name": name,
+                        "artist_name": artist_name,
+                        "image_url": image_url,
+                        "status_text": "RECENTLY PLAYED",
+                    }
+        except Exception as e:
+            print(f"Exception fetching recently played tracks: {e}")
+        return None
+
+    def __fetch_music_data(self):
+        """
+        Fetches current/recently played song, falling back to recently added library albums.
         """
         token, cookie, media_user_token = self._get_credentials()
 
@@ -85,9 +127,17 @@ class RenderCard:
                 "name": "Missing Credentials",
                 "artist_name": f"Set {', '.join(missing)} in Vercel",
                 "image_url": "",
+                "status_text": "ERROR",
             }
             return
 
+        # 1. Primary: Try actual recently played tracks
+        recent_track = self.__fetch_recently_played_tracks(token, cookie, media_user_token)
+        if recent_track:
+            self.__data = recent_track
+            return
+
+        # 2. Fallback: Recently added library albums
         url = "https://amp-api.music.apple.com/v1/me/library/recently-added?art%5Burl%5D=f&fields%5Balbums%5D=artistName%2CartistUrl%2Cartwork%2CcontentRating%2CeditorialArtwork%2Cname%2CplayParams%2CreleaseDate%2Curl&fields%5Bartists%5D=name%2Curl&format%5Bresources%5D=map&includeOnly=catalog%2Cartists&include%5Blibrary-albums%5D=artists&include%5Blibrary-artists%5D=catalog&limit=25&omit%5Bresource%5D=autos"
         headers = {
             "Authorization": f"Bearer {token}",
@@ -106,6 +156,7 @@ class RenderCard:
                     "name": "Apple Music Error",
                     "artist_name": msg,
                     "image_url": "",
+                    "status_text": "ERROR",
                 }
                 return
 
@@ -116,6 +167,7 @@ class RenderCard:
                     "name": "API Response Error",
                     "artist_name": "Invalid response format",
                     "image_url": "",
+                    "status_text": "ERROR",
                 }
                 return
 
@@ -128,6 +180,7 @@ class RenderCard:
                     "name": "No Albums Found",
                     "artist_name": "Apple Music Library",
                     "image_url": "",
+                    "status_text": "LIBRARY",
                 }
                 return
 
@@ -152,15 +205,17 @@ class RenderCard:
                     "name": name,
                     "artist_name": artist_name,
                     "image_url": image_url,
+                    "status_text": "RECENTLY ADDED",
                 })
 
             if album_data:
-                self.__data = random.choice(album_data)
+                self.__data = album_data[0]
             else:
                 self.__data = {
                     "name": "No Artwork Found",
                     "artist_name": "Apple Music Library",
                     "image_url": "",
+                    "status_text": "LIBRARY",
                 }
         except Exception as e:
             print(f"Exception while fetching: {e}")
@@ -168,6 +223,7 @@ class RenderCard:
                 "name": "Apple Music Error",
                 "artist_name": str(e)[:30],
                 "image_url": "",
+                "status_text": "ERROR",
             }
 
     def generate_card(self) -> str:
@@ -176,15 +232,16 @@ class RenderCard:
         Returns:
             str: SVG card
         """
-        self.__fetch_recent_albums()
+        self.__fetch_music_data()
         image = self.__album_art_b64(self.__data.get("image_url", ""))
         album_name = self.__data.get("name", "Unknown")
         album_name = album_name.replace("&", "and")
         artist_name = self.__data.get("artist_name", "")
         artist_name = artist_name.replace("&", "and")
         album_name = (
-            (album_name[:20] + "...") if len(album_name) > 22 else album_name
+            (album_name[:24] + "...") if len(album_name) > 26 else album_name
         )
+        status_text = self.__data.get("status_text", "RECENTLY PLAYED")
         icon = self.__apple_music_icon_b64()
 
         template = jinja_env.get_template("card.html.j2")
@@ -193,6 +250,7 @@ class RenderCard:
             album_name=album_name,
             artist_name=artist_name,
             apple_icon=icon,
+            status_text=status_text,
         )
 
         return svg
@@ -215,6 +273,7 @@ def debug():
     }
 
     if token and cookie and media_user_token:
+        # Check primary endpoint: recent played tracks
         headers = {
             "Authorization": f"Bearer {token}",
             "Cookie": cookie,
@@ -222,44 +281,23 @@ def debug():
             "origin": "https://music.apple.com",
             "referer": "https://music.apple.com/",
         }
-        endpoints = {
-            "recently_added": "https://amp-api.music.apple.com/v1/me/library/recently-added?limit=2",
-            "recent_played_tracks": "https://amp-api.music.apple.com/v1/me/recent/played/tracks?limit=2",
-            "recent_played": "https://amp-api.music.apple.com/v1/me/recent/played?limit=2",
-            "heavy_rotation": "https://amp-api.music.apple.com/v1/me/history/heavy-rotation?limit=2",
-        }
-        results = {}
-        for name, test_url in endpoints.items():
-            try:
-                res = requests.get(test_url, headers=headers, timeout=5)
-                res_data = None
-                try:
-                    json_val = res.json()
-                    if isinstance(json_val, dict):
-                        # Extract preview of items
-                        if "data" in json_val:
-                            res_data = [
-                                {
-                                    "id": item.get("id"),
-                                    "type": item.get("type"),
-                                    "name": item.get("attributes", {}).get("name"),
-                                    "artist": item.get("attributes", {}).get("artistName"),
-                                }
-                                for item in json_val.get("data", [])[:2]
-                            ]
-                        elif "resources" in json_val:
-                            res_data = list(json_val["resources"].keys())
-                except Exception:
-                    pass
-
-                results[name] = {
-                    "status_code": res.status_code,
-                    "preview": res_data if res_data is not None else res.text[:200],
-                }
-            except Exception as e:
-                results[name] = {"error": str(e)}
-
-        status["endpoint_tests"] = results
+        try:
+            res = requests.get(
+                "https://amp-api.music.apple.com/v1/me/recent/played/tracks?limit=1",
+                headers=headers,
+                timeout=5,
+            )
+            status["apple_recent_played_status"] = res.status_code
+            if res.status_code == 200:
+                data = res.json().get("data", [])
+                if data:
+                    track_attrs = data[0].get("attributes", {})
+                    status["most_recent_song"] = track_attrs.get("name")
+                    status["most_recent_artist"] = track_attrs.get("artistName")
+            else:
+                status["apple_recent_played_error"] = res.text[:150]
+        except Exception as e:
+            status["apple_recent_played_exception"] = str(e)
 
     return jsonify(status)
 
