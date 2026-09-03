@@ -215,21 +215,51 @@ def debug():
     }
 
     if token and cookie and media_user_token:
-        try:
-            url = "https://amp-api.music.apple.com/v1/me/library/recently-added?limit=1"
-            headers = {
-                "Authorization": f"Bearer {token}",
-                "Cookie": cookie,
-                "media-user-token": media_user_token,
-                "origin": "https://music.apple.com",
-                "referer": "https://music.apple.com/",
-            }
-            res = requests.get(url, headers=headers, timeout=5)
-            status["apple_api_status_code"] = res.status_code
-            if res.status_code != 200:
-                status["apple_api_error_preview"] = res.text[:200]
-        except Exception as e:
-            status["apple_api_exception"] = str(e)
+        headers = {
+            "Authorization": f"Bearer {token}",
+            "Cookie": cookie,
+            "media-user-token": media_user_token,
+            "origin": "https://music.apple.com",
+            "referer": "https://music.apple.com/",
+        }
+        endpoints = {
+            "recently_added": "https://amp-api.music.apple.com/v1/me/library/recently-added?limit=2",
+            "recent_played_tracks": "https://amp-api.music.apple.com/v1/me/recent/played/tracks?limit=2",
+            "recent_played": "https://amp-api.music.apple.com/v1/me/recent/played?limit=2",
+            "heavy_rotation": "https://amp-api.music.apple.com/v1/me/history/heavy-rotation?limit=2",
+        }
+        results = {}
+        for name, test_url in endpoints.items():
+            try:
+                res = requests.get(test_url, headers=headers, timeout=5)
+                res_data = None
+                try:
+                    json_val = res.json()
+                    if isinstance(json_val, dict):
+                        # Extract preview of items
+                        if "data" in json_val:
+                            res_data = [
+                                {
+                                    "id": item.get("id"),
+                                    "type": item.get("type"),
+                                    "name": item.get("attributes", {}).get("name"),
+                                    "artist": item.get("attributes", {}).get("artistName"),
+                                }
+                                for item in json_val.get("data", [])[:2]
+                            ]
+                        elif "resources" in json_val:
+                            res_data = list(json_val["resources"].keys())
+                except Exception:
+                    pass
+
+                results[name] = {
+                    "status_code": res.status_code,
+                    "preview": res_data if res_data is not None else res.text[:200],
+                }
+            except Exception as e:
+                results[name] = {"error": str(e)}
+
+        status["endpoint_tests"] = results
 
     return jsonify(status)
 
